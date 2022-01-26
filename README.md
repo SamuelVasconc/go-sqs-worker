@@ -63,10 +63,6 @@ Configurando as variáveis de ambiente
 | CONNMAXLIFETIME   | Tempo de vida da conexão com o banco            |              | :white_check_mark: |
 | MAXIDLECONNS      | Quantidade máxima de conexões ociosas           |              | :white_check_mark: |
 | MAXOPENCONNS      | Quantidade máxima de conexões abertas           |              | :white_check_mark: |
-| PORT              | Porta na qual API sera instanciada              |              | :white_check_mark: |
-| HTTP_READ_TIMEOUT | Tempo maximo de leitura                         |              | :white_check_mark: |
-| HTTP_WRITE_TIMEOUT| Tempo maximo de escrita                         |              | :white_check_mark: |
-| GROUPREQUEST      | Prefixo da url nas chamadas http                |              | :white_check_mark: |
 
 ## Arquitetura de pastas
 
@@ -75,11 +71,9 @@ Configurando as variáveis de ambiente
 ```bash
 go-sqs-worker
        |-- cmd
-           |-- server.go
-           |-- handlers
+           |-- worker.go
        |-- config
            |-- db
-           |-- middlewares
        |-- interfaces
        |-- migrations
        |-- models
