@@ -52,7 +52,7 @@ func (m *mysqlRepository) GetLines(protocol string) ([]*models.Transaction, erro
 	query := `SELECT id, 
 					date, 
 					amount, 
-					obs, 
+					observation, 
 					status 
 				FROM t_transactions
 				WHERE protocol = ?`
