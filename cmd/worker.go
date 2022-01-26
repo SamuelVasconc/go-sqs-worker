@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"log"
 	"os"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/SamuelVasconc/go-sqs-worker/repositories"
 	"github.com/SamuelVasconc/go-sqs-worker/usecases"
 	"github.com/SamuelVasconc/go-sqs-worker/utils"
+	"github.com/SamuelVasconc/go-sqs-worker/utils/logger"
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
 
@@ -27,6 +27,9 @@ type Worker struct {
 }
 
 func (w *Worker) Initialization() {
+
+	logger.DefineLoggingLevel()
+
 	//Inicialize Database Connection
 	db.InitDb()
 
@@ -39,7 +42,7 @@ func (w *Worker) Initialization() {
 	var err error
 	w.SQS.Conn, err = queue.InitSQSQueue("", w.SQS.Region, w.SQS.ID, w.SQS.Secret)
 	if err != nil {
-		log.Println("[worker/Initialization] Error to connect on SQS queue: ", utils.HandleError(err).Error())
+		logger.Error("Error to connect on SQS queue:", utils.HandleError(err).Error())
 		os.Exit(-1)
 	}
 
@@ -55,16 +58,19 @@ func (w *Worker) Execute() {
 
 	for {
 		//Load Parameters
+		logger.Info("Loading Parameters..")
 		parameters, err := utils.PrepareParameters()
 		if err != nil {
-			log.Println("[worker/Initialization] Error to connect on SQS queue: ", utils.HandleError(err).Error())
+			logger.Error("Error prepare parameters:", utils.HandleError(err).Error())
 			return
 		}
 
+		logger.Info("Starting Execution..")
 		w.MySqlUseCase.GetLines(parameters)
 
 		//Alternativa para o uso de cronjobs
 		//uma vez que o processo principal se encerra o worker dorme por um tempo determinado e retorna a execução atualizando os parametros
+		logger.Info("Ending Execution, Sleeping minutes:", parameters.SleepTime)
 		time.Sleep(time.Duration(parameters.SleepTime) * time.Minute)
 	}
 }

@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/SamuelVasconc/go-sqs-worker/utils/logger"
 	"github.com/pressly/goose"
 )
 
@@ -44,7 +44,7 @@ func InitDb() {
 
 	DBConn, err = sql.Open("mysql", connectionString)
 	if err != nil {
-		log.Printf("[db/init] - Error when trying to open connection (%s). Error: %s", a.Env, err.Error())
+		logger.Error("Error when trying to open connection", a.Env, err.Error())
 	}
 	DBConn.SetConnMaxLifetime(time.Minute * maxLifeTime)
 	DBConn.SetMaxIdleConns(maxIdleConns)
@@ -52,7 +52,7 @@ func InitDb() {
 
 	goose.SetDialect("mysql")
 	if err := goose.Up(DBConn, "./migrations"); err != nil {
-		log.Println("[db/init] - goose", err)
+		logger.Error("goose", err)
 	}
 }
 
